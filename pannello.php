@@ -70,7 +70,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <title>Document</title>
+  <title>Pannello</title>
 </head>
 
 <body>
@@ -163,7 +163,7 @@ if(isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
         <div class="modal-body">
           <form action="pannello.php" method="POST">
             <div class="form-floating my-3">
-              <input type="text" class="form-control" id="floatingInput" placeholder="Nome utente" name="nomeutente" value="<?php echo $user['nomeutente']; ?>" />
+              <input type="text" class="form-control" id="floatingInput" placeholder="Nome utente" name="nomeutente" value="" />
               <label for="floatingInput">Nome utente</label>
             </div>
             <div class="form-floating my-3">

@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-?>
+
 
 
 <!DOCTYPE html>
@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="description" content="" />
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors" />
     <meta name="generator" content="Hugo 0.122.0" />
-    <title>Progetto Settimana 16</title>
+    <title>Registrati</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/sign-in/" />
 
@@ -95,13 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="confirmPassword">Conferma Password</label>
             </div>
 
-            <div class="form-check text-start my-3">
-                <input class="form-check-input" type="checkbox" value="logCookie" id="flexCheckDefault" name="check" />
-                <label class="form-check-label" for="flexCheckDefault">
-                    Ricordami
-                </label>
-            </div>
-            
+           
             <button class="btn btn-primary w-100 py-2" type="submit">
                 Registrati
             </button>

@@ -27,12 +27,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($user && password_verify($password, $user['password']) && $user['ruolo'] === 'admin') {
         $_SESSION['session_id'] = $user['id'];
-        $_SESSION['nomeutente'] = $user['username'];
+        $_SESSION['nomeutente'] = $user['nomeutente'];
         $_SESSION['ruolo'] = $user['ruolo']; // memorizza il ruolo dell'utente in sessione
         header('Location: pannello.php');
         exit;
-    } else {
-        $_SESSION['error'] = "Credenziali non valide o non hai il ruolo di amministratore.";
+    } elseif ($user && password_verify($password, $user['password']) && $user['ruolo'] === 'utente') {
+        $_SESSION['session_id'] = $user['id'];
+        $_SESSION['nomeutente'] = $user['nomeutente'];
+        $_SESSION['ruolo'] = $user['ruolo']; // memorizza il ruolo dell'utente in sessione
+        header('Location: paginaUtente.php');
+        exit;
+    }
+    else {
+        $_SESSION['error'] = "Credenziali non valide ";
         header('Location: index.php');
         exit;
     }
@@ -50,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="description" content="" />
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors" />
     <meta name="generator" content="Hugo 0.122.0" />
-    <title>Progetto Settimana 16</title>
+    <title>Login</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/sign-in/" />
 
@@ -81,12 +88,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="floatingPassword">Password</label>
             </div>
 
-            <div class="form-check text-start my-3">
-                <input class="form-check-input" type="checkbox" value="logCookie" id="flexCheckDefault" name="check" />
-                <label class="form-check-label" for="flexCheckDefault">
-                    Ricordami
-                </label>
-            </div>
             
             <button class="btn btn-primary w-100 py-2" type="submit">
                 Accedi
