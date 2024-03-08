@@ -49,9 +49,9 @@ class UserDTO
 
     public function updateUser(array $user)
     {
-        $sql = "UPDATE users SET nomeutente = :nomeutente, password = :password, ruolo = :ruolo WHERE id = :id";
+        $sql = "UPDATE users SET nomeutente = :nomeutente,  ruolo = :ruolo WHERE id = :id";
         $stm = $this->conn->prepare($sql);
-        $stm->execute(['nomeutente' => $user['nomeutente'], 'password' => $user['password'], 'ruolo' => $user['ruolo'], 'id' => $user['id']]);
+        $stm->execute(['nomeutente' => $user['nomeutente'],  'ruolo' => $user['ruolo'], 'id' => $user['id']]);
         return $stm->rowCount();
     }
 

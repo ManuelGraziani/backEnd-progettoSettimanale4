@@ -37,10 +37,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Reindirizza alla stessa pagina dopo l'inserimento
     header('Location: pannello.php');
     exit;
+  } elseif (isset($_POST['action']) && $_POST['action'] == 'edit' && isset($_POST['id'])) {
+    // Se è stata inviata la richiesta di modifica di un utente
+    $id = $_POST['id'];
+    $nomeutente = $_POST['nomeutente'];
+    $ruolo = $_POST['ruolo'];
+
+    // Effettua la modifica dell'utente nel database
+    $res = $userDTO->updateUser([
+      'id' => $id,
+      'nomeutente' => $nomeutente,
+      'ruolo' => $ruolo
+    ]);
+
+    // Reindirizza alla stessa pagina dopo la modifica
+    header('Location: pannello.php');
+    exit;
   }
 }
 
-if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
+if(isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
   // Se è stata richiesta l'eliminazione di un utente
   $id = $_GET['id'];
   $userDTO->deleteUser($id);
@@ -53,15 +69,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
 if(isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
   // Se è stata richiesta la modifica di un utente
   $id = $_GET['id'];
-  $res = $userDTO->updateUser($id);
-
-  // Reindirizza alla stessa pagina dopo la modifica
-  header('Location: pannello.php');
-  exit;
+  $user = $userDTO->getUserById($id);
 }
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -94,7 +104,6 @@ if(isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
         <tr>
           <th scope="col">#</th>
           <th scope="col">Nome utente</th>
-          <th scope="col">Password</th>
           <th scope="col">Ruolo</th>
           <th scope="col">Azioni</th>
         </tr>
@@ -104,10 +113,9 @@ if(isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
           <tr>
             <th scope="row"><?= $user['id'] ?></th>
             <td><?= $user['nomeutente'] ?></td>
-            <td><?= $user['password'] ?></td>
             <td><?= $user['ruolo'] ?></td>
             <td>
-              <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editUser">Modifica</button>
+              <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editUser<?= $user['id'] ?>">Modifica</button>
               <a href="pannello.php?action=delete&id=<?= $user['id'] ?>" class="btn btn-danger">Elimina</a>
             </td>
           </tr>
@@ -135,7 +143,6 @@ if(isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
               <label for="floatingPassword">Password</label>
             </div>
             <div class="form-floating my-3">
-              <!-- <input type="text" class="form-control" id="floatingInput" placeholder="Ruolo" name="ruolo" value="" /> -->
               <select class="form-select" aria-label="Default select example" name="ruolo">
                 <option selected value="admin">Admin</option>
                 <option value="utente">Utente</option>
@@ -152,36 +159,41 @@ if(isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
     </div>
   </div>
 
-  <!-- Modale di modifica utenti -->
-  <div class="modal fade" id="editUser" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Aggiungi utente</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form action="pannello.php" method="POST">
-            <div class="form-floating my-3">
-              <input type="text" class="form-control" id="floatingInput" placeholder="Nome utente" name="nomeutente" value="" />
-              <label for="floatingInput">Nome utente</label>
-            </div>
-            <div class="form-floating my-3">
-              <select class="form-select" aria-label="Default select example" name="ruolo">
-                <option selected value="admin">Admin</option>
-                <option value="utente">Utente</option>
-              </select>
-              <label for="ruolo">Ruolo</label>
-            </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annulla</button>
-          <a href="pannello.php?action=edit&id=<?= $user['id'] ?>" class="btn btn-warning" type="submit">Modifica</a>
-          </form>
+  <!-- Modali di modifica utenti -->
+  <?php foreach ($res as $user) : ?>
+    <div class="modal fade" id="editUser<?= $user['id'] ?>" tabindex="-1" aria-labelledby="editUser<?= $user['id'] ?>" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Modifica utente</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="pannello.php" method="POST">
+              <input type="hidden" name="action" value="edit">
+              <input type="hidden" name="id" value="<?= $user['id'] ?>">
+              <div class="form-floating my-3">
+                <input type="text" class="form-control" id="floatingInput" placeholder="Nome utente" name="nomeutente" value="<?= $user['nomeutente'] ?>" />
+                <label for="floatingInput">Nome utente</label>
+              </div>
+              <div class="form-floating my-3">
+                <select class="form-select" aria-label="Default select example" name="ruolo">
+                  <option value="admin" <?= ($user['ruolo'] == 'admin') ? 'selected' : '' ?>>Admin</option>
+                  <option value="utente" <?= ($user['ruolo'] == 'utente') ? 'selected' : '' ?>>Utente</option>
+                </select>
+                <label for="ruolo">Ruolo</label>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annulla</button>
+            <button type="submit" class="btn btn-warning">Modifica</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  <?php endforeach; ?>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 
